@@ -1,0 +1,24 @@
+{
+ "formato": "gabcmt.produtividade",
+ "versao": 1,
+ "atualizadoEm": null,
+ "enviadoPor": null,
+ "origem": "Gabinete CMT · Enviar produtividade ao Git",
+ "descricao": "Registros de produtividade de todos os servidores (minutas de voto, monocráticas, despachos, diligências, pendências resolvidas, produção complementar, correções e revisões). Mesclado por id: nada é apagado; o que muda no app é atualizado.",
+ "tipos": {
+  "minuta": "Minuta de voto",
+  "mono": "Decisão monocrática",
+  "despacho": "Minuta de despacho",
+  "diligencia": "Diligência",
+  "pendencia": "Pendência resolvida",
+  "complementar": "Produção complementar",
+  "correcao": "Correção",
+  "revisao": "Revisão de monocrática"
+ },
+ "totais": {
+  "registros": 0,
+  "servidores": 0
+ },
+ "resumoPorServidor": {},
+ "registros": []
+}
