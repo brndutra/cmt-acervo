@@ -326,7 +326,7 @@
  "regras": {
   "Seção Competente": "etiqueta de seção explícita (ex.: '1ª Seção'); senão, o colegiado/assunto (Painel.secaoCompetente)",
   "META": "metas do CNJ pelas etiquetas e pela data de distribuição (_autoMetaTags)",
-  "Impedimento / Suspeição": "cadastro de magistrados × partes e advogados (_autoRestriction); padronizar nomes",
+  "Impedimento / Suspeição": "sempre automático: etiqueta do PJe ('Impedimento Dr. Ney Gustavo', 'IMPEDIMENTO - DR. JEAN'…) resolvida pelo cadastro único gabcmt/referencias/magistrados.json (aliases → magistradoId); e, quando triagem.primeiroGrau.magistradoId for de um integrante do colegiado, impedimento por ter atuado no 1º grau (CPC, art. 144, II)",
   "AJG": "presença da DPU ou etiqueta de gratuidade (_ajgAuto, _ajgFromDpu)",
   "DPU (controle)": "campo dpu do PJe (_dpuAuto)",
   "Regularidade": "texto montado a partir de representação, preparo e tempestividade (Painel.regularityNotes)",
@@ -408,16 +408,56 @@
   ]
  },
  "fluxo": {
-  "SERVIDOR": "responsavel",
-  "MINUTADO": "minutado.data",
-  "CORRETOR": "corrigido.corretor",
-  "CORRIGIDO": "corrigido.data",
-  "LIBERADO": "liberado.data",
-  "Refinado": "refinado",
-  "Conferido": "conferido",
-  "_minutadoBy": "minutado.servidor",
-  "_minutadoSession": "minutado.sessao",
-  "_minutadoMemberId": "minutado.membroId"
+  "colunasAntigas": {
+   "SERVIDOR": "responsavel",
+   "MINUTADO": "minutado.data",
+   "CORRETOR": "corrigido.corretor",
+   "CORRIGIDO": "corrigido.data",
+   "LIBERADO": "liberado.data",
+   "Refinado": "refinado.data",
+   "Conferido": "conferido.data",
+   "_minutadoBy": "minutado.servidor",
+   "_minutadoSession": "minutado.sessao",
+   "_minutadoMemberId": "minutado.membroId"
+  },
+  "etapas": {
+   "minutado": [
+    "servidor",
+    "data",
+    "sessao"
+   ],
+   "refinado": [
+    "responsavel",
+    "data"
+   ],
+   "conferido": [
+    "responsavel",
+    "data"
+   ],
+   "corrigido": [
+    "corretor",
+    "data"
+   ],
+   "liberado": [
+    "responsavel",
+    "data"
+   ]
+  },
+  "produtividade": {
+   "regra": "a produtividade é derivada das etapas do fluxo (quem e quando), sem lançamento separado; cada etapa com data gera um registro em produtividade/registros.json",
+   "tipoPorEtapa": {
+    "minutado": "minuta (ou mono/despacho, conforme triagem['Tipo de Voto'])",
+    "corrigido": "correcao",
+    "refinado": "revisao",
+    "conferido": "revisao",
+    "liberado": "(não conta produção; marca a liberação)"
+   }
+  }
+ },
+ "primeiroGrau": {
+  "onde": "operacional.triagem.primeiroGrau = {juizo, juiz, magistradoId}",
+  "uso": "busca de casos do mesmo juiz em 1º grau (acervo e paradigmas) e impedimento do art. 144, II, CPC",
+  "fonte": "preenchido na triagem/minuta a partir da sentença; o PJe 2G não exporta o juízo de origem"
  },
  "pauta": {
   "colunas": [
@@ -435,6 +475,15 @@
    "_pautaHistory",
    "_pautaIncidents"
   ],
+  "situacoes": [
+   "selecionado",
+   "pautado",
+   "pendente",
+   "adiado",
+   "retirado",
+   "vista",
+   "julgado"
+  ],
   "regra": "sessaoInaugural = primeira sessão em que o processo entrou (gravada uma vez); historico = um registro por sessão (sessao, numeroPrevio → item, situacao, motivo, proximaSessao, encerrado); sessão atual e status de julgamento saem do último registro"
  },
  "descartadas": {
@@ -446,7 +495,10 @@
   "Assunto": "cópia de assunto_judicial em 100% das linhas (fica como fonte de reserva)",
   "Etiquetas / Etiquetas Originais": "iguais a etiquetas do PJe em 100% das linhas"
  },
+ "correcoesNaMigracao": {
+  "dataEntradaTarefa": "data_entrada_tarefa chega do PJe como texto 'dd/mm/aaaa hh:mm:ss'. Na importação do Painel, o texto com dia ≤ 12\nfoi lido como mês/dia (data invertida, às vezes no futuro) e o com dia > 12 ficou como texto. Devolve\n(data ISO, hora, motivo da correção ou '')."
+ },
  "observacoes": [
-  "data_entrada_tarefa traz datas futuras (ex.: 2026-12-08) em parte das linhas: provável inversão dia/mês na importação do PJe; conferir no importador do Painel."
+  "O importador do Painel precisa ler data_entrada_tarefa como dd/mm/aaaa (etapa 3); até lá, cada nova importação do PJe repete a inversão."
  ]
 }

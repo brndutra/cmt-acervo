@@ -72,7 +72,10 @@ IMPORTADO = {
 REGRAS = {
     "Seção Competente": "etiqueta de seção explícita (ex.: '1ª Seção'); senão, o colegiado/assunto (Painel.secaoCompetente)",
     "META": "metas do CNJ pelas etiquetas e pela data de distribuição (_autoMetaTags)",
-    "Impedimento / Suspeição": "cadastro de magistrados × partes e advogados (_autoRestriction); padronizar nomes",
+    "Impedimento / Suspeição": "sempre automático: etiqueta do PJe ('Impedimento Dr. Ney Gustavo', 'IMPEDIMENTO - DR. JEAN'…) "
+                               "resolvida pelo cadastro único gabcmt/referencias/magistrados.json (aliases → magistradoId); "
+                               "e, quando triagem.primeiroGrau.magistradoId for de um integrante do colegiado, impedimento "
+                               "por ter atuado no 1º grau (CPC, art. 144, II)",
     "AJG": "presença da DPU ou etiqueta de gratuidade (_ajgAuto, _ajgFromDpu)",
     "DPU (controle)": "campo dpu do PJe (_dpuAuto)",
     "Regularidade": "texto montado a partir de representação, preparo e tempestividade (Painel.regularityNotes)",
@@ -92,8 +95,13 @@ PADROES = {"Tempestividade": "Não Verificado", "Preparo": "Não Verificado", "R
            "MPF": "Não se Aplica", "Mídias": "Não se Aplica", "Contrarrazões - Situação": "apresentadas"}
 
 FLUXO = {"SERVIDOR": ("responsavel",), "MINUTADO": ("minutado", "data"), "CORRETOR": ("corrigido", "corretor"),
-         "CORRIGIDO": ("corrigido", "data"), "LIBERADO": ("liberado", "data"), "Refinado": ("refinado",),
-         "Conferido": ("conferido",)}
+         "CORRIGIDO": ("corrigido", "data"), "LIBERADO": ("liberado", "data"), "Refinado": ("refinado", "data"),
+         "Conferido": ("conferido", "data")}
+# formato de cada etapa do fluxo: quem e quando (o app grava os dois ao marcar a etapa)
+ETAPAS_FLUXO = {"minutado": ["servidor", "data", "sessao"], "refinado": ["responsavel", "data"],
+                "conferido": ["responsavel", "data"], "corrigido": ["corretor", "data"], "liberado": ["responsavel", "data"]}
+PRODUTIVIDADE = {"minutado": "minuta (ou mono/despacho, conforme triagem['Tipo de Voto'])", "corrigido": "correcao",
+                 "refinado": "revisao", "conferido": "revisao", "liberado": "(não conta produção; marca a liberação)"}
 FLUXO_TEC = {"_minutadoBy": ("minutado", "servidor"), "_minutadoSession": ("minutado", "sessao"),
              "_minutadoMemberId": ("minutado", "membroId")}
 PAUTA_COLS = ["Sessão original", "Sessão Destino", "Nova sessão de destino", "Motivo da remarcação", "Seleção Prévia",
@@ -124,6 +132,33 @@ def data_iso(v):
         return f"20{m.group(3)}-{int(m.group(1)):02d}-{int(m.group(2)):02d}"
     m = re.fullmatch(r"(\d{2})/(\d{2})/(\d{4})", str(v).strip())
     return f"{m.group(3)}-{m.group(2)}-{m.group(1)}" if m else v
+
+
+HOJE = "2026-10-23"
+
+
+def corrigir_entrada_tarefa(r):
+    """data_entrada_tarefa chega do PJe como texto 'dd/mm/aaaa hh:mm:ss'. Na importação do Painel, o texto com dia ≤ 12
+    foi lido como mês/dia (data invertida, às vezes no futuro) e o com dia > 12 ficou como texto. Devolve
+    (data ISO, hora, motivo da correção ou '')."""
+    v = str(r.get("data_entrada_tarefa") or "").strip()
+    m = re.fullmatch(r"(\d{2})/(\d{2})/(\d{4})(?:\s+(\d{2}:\d{2}(?::\d{2})?))?", v)
+    if m:
+        return f"{m.group(3)}-{m.group(2)}-{m.group(1)}", m.group(4) or "", "texto dd/mm/aaaa convertido"
+    m = re.fullmatch(r"(\d{4})-(\d{2})-(\d{2})", v)
+    if not m or int(m.group(3)) > 12 or m.group(2) == m.group(3):
+        return v, "", ""
+    trocada = f"{m.group(1)}-{m.group(3)}-{m.group(2)}"
+    t = r.get("_") or {}
+    sigiloso = str(r.get("Consta_Acervo_Sigiloso", "")).lower() == "sim"
+    ult = r.get("Data_Última_Movimentação", "")
+    if trocada > HOJE or (ult and v == ult):
+        return v, "", ""
+    if not t.get("_pjeCreated") and not sigiloso:
+        return trocada, "", "dia e mês invertidos na importação"
+    if v > HOJE or (ult and trocada == ult and v != ult):
+        return trocada, "", "dia e mês invertidos na importação"
+    return v, "", ""
 
 
 def bloco(col):
@@ -202,6 +237,13 @@ def main(arq_acervo, pasta_banco):
                 continue
             s0, c0, v0 = vals[0]
             imp[campo] = data_iso(v0) if campo == "dataFim" else v0
+            if campo == "dataEntradaTarefa":
+                d, h, motivo = corrigir_entrada_tarefa(r)
+                imp[campo] = d
+                if h:
+                    imp["horaEntradaTarefa"] = h
+                if motivo == "dia e mês invertidos na importação":
+                    imp.setdefault("correcoes", []).append(f"dataEntradaTarefa: {motivo} ({v0} → {d})")
             fontes_reg.update(s for s, _, _ in vals if s != APP)
             for s, c, v in vals[1:]:
                 if not igual(v, v0) and s != APP:
@@ -260,16 +302,25 @@ def main(arq_acervo, pasta_banco):
         "padroes": PADROES,
         "padroesTecnicos": padroes_tec,
         "operacional": {b: sorted(c) for b, c in blocos_vistos.items()},
-        "fluxo": {**{c: ".".join(p) for c, p in FLUXO.items()}, **{c: ".".join(p) for c, p in FLUXO_TEC.items()}},
+        "fluxo": {"colunasAntigas": {**{c: ".".join(p) for c, p in FLUXO.items()}, **{c: ".".join(p) for c, p in FLUXO_TEC.items()}},
+                  "etapas": ETAPAS_FLUXO,
+                  "produtividade": {"regra": "a produtividade é derivada das etapas do fluxo (quem e quando), sem lançamento "
+                                             "separado; cada etapa com data gera um registro em produtividade/registros.json",
+                                    "tipoPorEtapa": PRODUTIVIDADE}},
+        "primeiroGrau": {"onde": "operacional.triagem.primeiroGrau = {juizo, juiz, magistradoId}",
+                         "uso": "busca de casos do mesmo juiz em 1º grau (acervo e paradigmas) e impedimento do art. 144, II, CPC",
+                         "fonte": "preenchido na triagem/minuta a partir da sentença; o PJe 2G não exporta o juízo de origem"},
         "pauta": {"colunas": PAUTA_COLS + PAUTA_TEC,
+                  "situacoes": ["selecionado", "pautado", "pendente", "adiado", "retirado", "vista", "julgado"],
                   "regra": "sessaoInaugural = primeira sessão em que o processo entrou (gravada uma vez); historico = um "
                            "registro por sessão (sessao, numeroPrevio → item, situacao, motivo, proximaSessao, encerrado); "
                            "sessão atual e status de julgamento saem do último registro"},
         "descartadas": {**DESCARTADAS, "JULGAMENTO": "duplicava 'Seleção Prévia' (mesmo valor nos mesmos processos)",
                         "Assunto": "cópia de assunto_judicial em 100% das linhas (fica como fonte de reserva)",
                         "Etiquetas / Etiquetas Originais": "iguais a etiquetas do PJe em 100% das linhas"},
-        "observacoes": ["data_entrada_tarefa traz datas futuras (ex.: 2026-12-08) em parte das linhas: provável "
-                        "inversão dia/mês na importação do PJe; conferir no importador do Painel."],
+        "correcoesNaMigracao": {"dataEntradaTarefa": corrigir_entrada_tarefa.__doc__.strip()},
+        "observacoes": ["O importador do Painel precisa ler data_entrada_tarefa como dd/mm/aaaa (etapa 3); até lá, cada "
+                        "nova importação do PJe repete a inversão."],
     }
     escrever("acervo/correspondencias.json", corr)
     escrever("acervo/importado.json", {"schema": "gabcmt.acervo.importado", "versao": "1.0.0", "atualizadoEm": AGORA,
@@ -298,7 +349,9 @@ def main(arq_acervo, pasta_banco):
         for col, v in r.items():
             if vazio(v) or col in REGRAS or col in DESCARTADAS or PADROES.get(col) == v or col == "processo":
                 continue
-            if col in cols_imp:
+            if col == "data_entrada_tarefa":
+                ok = True   # corrigida de propósito (ver correcoes do importado)
+            elif col in cols_imp:
                 campo = next(c for c, f in IMPORTADO.items() if any(cc == col for _, cc in f))
                 ok = igual(i.get(campo), v) or igual(i.get("divergencias", {}).get(campo, {}).get(
                     next(s for s, cc in IMPORTADO[campo] if cc == col), None), v) or (campo == "dataFim")
