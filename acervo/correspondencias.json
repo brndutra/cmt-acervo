@@ -456,6 +456,10 @@
  },
  "primeiroGrau": {
   "onde": "operacional.triagem.primeiroGrau = {juizo, juiz, magistradoId}",
+  "colunasDoPainel": {
+   "Juízo de 1º grau": "juizo",
+   "Juiz de 1º grau": "juiz"
+  },
   "uso": "busca de casos do mesmo juiz em 1º grau (acervo e paradigmas) e impedimento do art. 144, II, CPC",
   "fonte": "preenchido na triagem/minuta a partir da sentença; o PJe 2G não exporta o juízo de origem"
  },

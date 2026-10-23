@@ -24,7 +24,7 @@ O acervo é dividido em três camadas, ligadas pelo `id` (`acv-<20 dígitos do p
 
 A triagem ganha `primeiroGrau` (`juizo`, `juiz`, `magistradoId` do cadastro `gabcmt/referencias/magistrados.json`), para buscar casos do mesmo juiz em 1º grau e marcar o impedimento do art. 144, II, do CPC. `dataEntradaTarefa` foi corrigida em 1.334 processos (dia e mês invertidos na importação do PJe; ver `correcoes`).
 
-Até o Painel ser adaptado (etapa 3), ele continua lendo e gravando `gabcmt/banco/acervo.json`; estes arquivos foram gerados a partir dele pelo `scripts/migrar_acervo.py`, que confere, linha a linha, que nenhum valor decidido se perdeu.
+O **Painel Central** (`gabcmt/painel.html`) lê e grava estes arquivos diretamente, com um token deste repositório (Contents: leitura e escrita; pode ser lembrado no navegador). Ao gravar, refaz `produtividade/registros.json` a partir das etapas do fluxo (registros `fluxo-…`; os lançados à mão ficam como estão). A conversão linha do Painel ⇄ importado + operacional segue `acervo/correspondencias.json`, o mesmo arquivo usado por `scripts/migrar_acervo.py` (migração única, já feita a partir de `gabcmt/banco/acervo.json`).
 
 ## produtividade/registros.json
 
