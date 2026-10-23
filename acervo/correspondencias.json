@@ -1,0 +1,504 @@
+{
+ "schema": "gabcmt.acervo.correspondencias",
+ "versao": "1.0.0",
+ "atualizadoEm": "2026-10-23T00:00:00Z",
+ "sistemas": [
+  "PJe 2G",
+  "BI · Gab A Acervo",
+  "BI · Sigilosos"
+ ],
+ "regraDePrioridade": "Em cada campo vale a primeira fonte da lista que tiver valor; as demais, quando diferem (além de maiúsculas e espaços), ficam em 'divergencias' do processo.",
+ "importado": {
+  "classe": [
+   {
+    "sistema": "PJe 2G",
+    "coluna": "classe_judicial"
+   },
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Classe"
+   }
+  ],
+  "classeCodigo": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Código_Classe"
+   }
+  ],
+  "assunto": [
+   {
+    "sistema": "PJe 2G",
+    "coluna": "assunto_judicial"
+   },
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Assunto_Principal"
+   },
+   {
+    "sistema": "Painel (cópia)",
+    "coluna": "Assunto"
+   }
+  ],
+  "assuntoCodigo": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Código_Assunto_Principal"
+   }
+  ],
+  "assuntos": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Assuntos_do_Processo"
+   }
+  ],
+  "poloAtivo": [
+   {
+    "sistema": "PJe 2G",
+    "coluna": "polo_ativo"
+   },
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Polo_Ativo"
+   }
+  ],
+  "poloPassivo": [
+   {
+    "sistema": "PJe 2G",
+    "coluna": "polo_passivo"
+   },
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Polo_Passivo"
+   }
+  ],
+  "advogadoPoloAtivo": [
+   {
+    "sistema": "PJe 2G",
+    "coluna": "advogado_pa"
+   }
+  ],
+  "advogadoPoloPassivo": [
+   {
+    "sistema": "PJe 2G",
+    "coluna": "advogado_pp"
+   }
+  ],
+  "dpu": [
+   {
+    "sistema": "PJe 2G",
+    "coluna": "dpu"
+   }
+  ],
+  "mpf": [
+   {
+    "sistema": "PJe 2G",
+    "coluna": "mpf"
+   }
+  ],
+  "valorCausa": [
+   {
+    "sistema": "PJe 2G",
+    "coluna": "valor_causa"
+   },
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Valor_da_Causa"
+   }
+  ],
+  "dataDistribuicao": [
+   {
+    "sistema": "PJe 2G",
+    "coluna": "data_distribuição"
+   },
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Data_Distribuição"
+   }
+  ],
+  "dataDistribuicao1g": [
+   {
+    "sistema": "PJe 2G",
+    "coluna": "dt_distribuicao_1g"
+   }
+  ],
+  "tarefaAtual": [
+   {
+    "sistema": "PJe 2G",
+    "coluna": "tarefa_atual"
+   }
+  ],
+  "dataEntradaTarefa": [
+   {
+    "sistema": "PJe 2G",
+    "coluna": "data_entrada_tarefa"
+   }
+  ],
+  "prioridade": [
+   {
+    "sistema": "PJe 2G",
+    "coluna": "prioridade"
+   }
+  ],
+  "etiquetas": [
+   {
+    "sistema": "PJe 2G",
+    "coluna": "etiquetas"
+   },
+   {
+    "sistema": "PJe 2G",
+    "coluna": "Etiquetas"
+   },
+   {
+    "sistema": "PJe 2G",
+    "coluna": "Etiquetas Originais"
+   }
+  ],
+  "ultimaMovimentacao": [
+   {
+    "sistema": "PJe 2G",
+    "coluna": "ultimo_movimento"
+   },
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Última_Movimentação"
+   }
+  ],
+  "dataUltimaMovimentacao": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Data_Última_Movimentação"
+   }
+  ],
+  "tempoUltimaMovimentacao": [
+   {
+    "sistema": "BI · Sigilosos",
+    "coluna": "Tempo_Última_Movimentação"
+   }
+  ],
+  "descricaoUltimaMovimentacaoSigilo": [
+   {
+    "sistema": "BI · Sigilosos",
+    "coluna": "DES_ULTIMA_MOVIME_SIGILO"
+   }
+  ],
+  "gabinete": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Gabinete"
+   }
+  ],
+  "secaoOrigem": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Seção de Origem"
+   }
+  ],
+  "conclusao": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Conclusão?"
+   }
+  ],
+  "dataConclusao": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Data_Conclusão"
+   }
+  ],
+  "pendentePrimeiroJulgamento": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Pendente_1Julgamento"
+   },
+   {
+    "sistema": "BI · Sigilosos",
+    "coluna": "SIN_PEND_1JULG"
+   }
+  ],
+  "fase": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Fase"
+   }
+  ],
+  "dataFase": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Data_Fase"
+   }
+  ],
+  "complemento": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Complemento"
+   }
+  ],
+  "base": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "BASE"
+   }
+  ],
+  "dataFim": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "DAT_FIM"
+   }
+  ],
+  "kTempo": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "K_TEMPO"
+   }
+  ],
+  "tempoTramitacao": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Tempo_de_Tramitação"
+   }
+  ],
+  "sinPrazoLegal": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "SIN_PRAZO_LEGAL"
+   }
+  ],
+  "sinSecretaria": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "SIN_SECRETARIA"
+   }
+  ],
+  "sinContadoria": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "SIN_CONTADORIA"
+   }
+  ],
+  "sinRemessaExterna": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "SIN_REM_EXTERNA"
+   }
+  ],
+  "sinUfor": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "SIN_UFOR"
+   }
+  ],
+  "sinCls": [
+   {
+    "sistema": "BI · Sigilosos",
+    "coluna": "SIN_CLS"
+   }
+  ],
+  "indicador": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Indicador"
+   }
+  ],
+  "constaAcervoGabA": [
+   {
+    "sistema": "BI · Gab A Acervo",
+    "coluna": "Consta_Acervo_Gab_A"
+   }
+  ],
+  "constaAcervoSigiloso": [
+   {
+    "sistema": "BI · Sigilosos",
+    "coluna": "Consta_Acervo_Sigiloso"
+   }
+  ],
+  "nivelSigilo": [
+   {
+    "sistema": "BI · Sigilosos",
+    "coluna": "Nível_Sigilo"
+   }
+  ]
+ },
+ "metadadosDaImportacao": {
+  "_pjeCreated": "criadoPelaImportacaoPje",
+  "_pjeFields": "camposVindosDoPje",
+  "_tagOriginalSource": "origemEtiquetas"
+ },
+ "regras": {
+  "Seção Competente": "etiqueta de seção explícita (ex.: '1ª Seção'); senão, o colegiado/assunto (Painel.secaoCompetente)",
+  "META": "metas do CNJ pelas etiquetas e pela data de distribuição (_autoMetaTags)",
+  "Impedimento / Suspeição": "sempre automático: etiqueta do PJe ('Impedimento Dr. Ney Gustavo', 'IMPEDIMENTO - DR. JEAN'…) resolvida pelo cadastro único gabcmt/referencias/magistrados.json (aliases → magistradoId); e, quando triagem.primeiroGrau.magistradoId for de um integrante do colegiado, impedimento por ter atuado no 1º grau (CPC, art. 144, II)",
+  "AJG": "presença da DPU ou etiqueta de gratuidade (_ajgAuto, _ajgFromDpu)",
+  "DPU (controle)": "campo dpu do PJe (_dpuAuto)",
+  "Regularidade": "texto montado a partir de representação, preparo e tempestividade (Painel.regularityNotes)",
+  "Etiquetas Operacionais": "pendências da triagem (ex.: VERIFICAR REPRESENTAÇÃO), recalculadas",
+  "Status de Julgamento": "situação do último registro do histórico de pauta",
+  "Ano": "ano de dataDistribuicao",
+  "Mês": "mês de dataDistribuicao",
+  "Qtde": "sempre 1 quando há indicador (contagem do BI)",
+  "Preparo = AJG": "preparo dispensado quando há AJG (_preparoAJG)"
+ },
+ "regrasTecnicas": [
+  "_ajgAuto",
+  "_ajgFromDpu",
+  "_dpuAuto",
+  "_autoRestriction",
+  "_magistradoRestricao",
+  "_restricaoTipo",
+  "_autoMetaTags",
+  "_metaTagSignature",
+  "_restrictionTagSignature",
+  "_preparoAJG",
+  "_preparoBeforeAJG",
+  "_prontoParaCorrecao",
+  "_julgadorColegiado"
+ ],
+ "padroes": {
+  "Tempestividade": "Não Verificado",
+  "Preparo": "Não Verificado",
+  "Representação": "Não Verificado",
+  "MPF": "Não se Aplica",
+  "Mídias": "Não se Aplica",
+  "Contrarrazões - Situação": "apresentadas"
+ },
+ "padroesTecnicos": {
+  "_preOrder": 0,
+  "_preReviewMigrated": true,
+  "_tagListsInitialized": true,
+  "_ementa": {
+   "juris": [],
+   "leis": [],
+   "razoes": []
+  },
+  "_genV": 2,
+  "_recursos": [
+   {
+    "artigo": "a",
+    "conectivo": "",
+    "finalExtra": "",
+    "ids": "",
+    "lista": [],
+    "organizacao": "auto",
+    "parte": "parte autora",
+    "parteCustom": "",
+    "pedidos": "",
+    "preliminares": "",
+    "semId": false,
+    "teses": "",
+    "transicaoMerito": "auto",
+    "verbo": ""
+   }
+  ],
+  "_contras": [
+   {
+    "finalExtra": "",
+    "ids": "",
+    "lista": [],
+    "merito": "",
+    "parte": "",
+    "pedidos": "",
+    "prelim": false,
+    "preliminares": "",
+    "semId": false
+   }
+  ]
+ },
+ "operacional": {
+  "triagem": [
+   "Dificuldade"
+  ]
+ },
+ "fluxo": {
+  "colunasAntigas": {
+   "SERVIDOR": "responsavel",
+   "MINUTADO": "minutado.data",
+   "CORRETOR": "corrigido.corretor",
+   "CORRIGIDO": "corrigido.data",
+   "LIBERADO": "liberado.data",
+   "Refinado": "refinado.data",
+   "Conferido": "conferido.data",
+   "_minutadoBy": "minutado.servidor",
+   "_minutadoSession": "minutado.sessao",
+   "_minutadoMemberId": "minutado.membroId"
+  },
+  "etapas": {
+   "minutado": [
+    "servidor",
+    "data",
+    "sessao"
+   ],
+   "refinado": [
+    "responsavel",
+    "data"
+   ],
+   "conferido": [
+    "responsavel",
+    "data"
+   ],
+   "corrigido": [
+    "corretor",
+    "data"
+   ],
+   "liberado": [
+    "responsavel",
+    "data"
+   ]
+  },
+  "produtividade": {
+   "regra": "a produtividade é derivada das etapas do fluxo (quem e quando), sem lançamento separado; cada etapa com data gera um registro em produtividade/registros.json",
+   "tipoPorEtapa": {
+    "minutado": "minuta (ou mono/despacho, conforme triagem['Tipo de Voto'])",
+    "corrigido": "correcao",
+    "refinado": "revisao",
+    "conferido": "revisao",
+    "liberado": "(não conta produção; marca a liberação)"
+   }
+  }
+ },
+ "primeiroGrau": {
+  "onde": "operacional.triagem.primeiroGrau = {juizo, juiz, magistradoId}",
+  "uso": "busca de casos do mesmo juiz em 1º grau (acervo e paradigmas) e impedimento do art. 144, II, CPC",
+  "fonte": "preenchido na triagem/minuta a partir da sentença; o PJe 2G não exporta o juízo de origem"
+ },
+ "pauta": {
+  "colunas": [
+   "Sessão original",
+   "Sessão Destino",
+   "Nova sessão de destino",
+   "Motivo da remarcação",
+   "Seleção Prévia",
+   "JULGAMENTO",
+   "Numeração Prévia",
+   "Item (Pauta de Julgamento)",
+   "Sessões",
+   "Histórico",
+   "_pautaEntries",
+   "_pautaHistory",
+   "_pautaIncidents"
+  ],
+  "situacoes": [
+   "selecionado",
+   "pautado",
+   "pendente",
+   "adiado",
+   "retirado",
+   "vista",
+   "julgado"
+  ],
+  "regra": "sessaoInaugural = primeira sessão em que o processo entrou (gravada uma vez); historico = um registro por sessão (sessao, numeroPrevio → item, situacao, motivo, proximaSessao, encerrado); sessão atual e status de julgamento saem do último registro"
+ },
+ "descartadas": {
+  "id": "recriado a partir do processo",
+  "Processo": "igual a processo",
+  "atualizado_em": "vai para o envelope",
+  "_": "desmembrado em fluxo, pauta, regras e técnico",
+  "JULGAMENTO": "duplicava 'Seleção Prévia' (mesmo valor nos mesmos processos)",
+  "Assunto": "cópia de assunto_judicial em 100% das linhas (fica como fonte de reserva)",
+  "Etiquetas / Etiquetas Originais": "iguais a etiquetas do PJe em 100% das linhas"
+ },
+ "correcoesNaMigracao": {
+  "dataEntradaTarefa": "data_entrada_tarefa chega do PJe como texto 'dd/mm/aaaa hh:mm:ss'. Na importação do Painel, o texto com dia ≤ 12\nfoi lido como mês/dia (data invertida, às vezes no futuro) e o com dia > 12 ficou como texto. Devolve\n(data ISO, hora, motivo da correção ou '')."
+ },
+ "observacoes": [
+  "O importador do Painel precisa ler data_entrada_tarefa como dd/mm/aaaa (etapa 3); até lá, cada nova importação do PJe repete a inversão."
+ ]
+}
