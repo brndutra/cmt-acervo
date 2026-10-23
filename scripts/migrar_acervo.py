@@ -17,6 +17,9 @@ from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
 AGORA = "2026-10-23T00:00:00Z"
+CORRECAO_EM = "2026-10-23T18:30:00.000Z"
+# colunas que o Painel passa a ter na triagem (juízo e juiz de 1º grau) → operacional.triagem.primeiroGrau
+COLUNAS_PRIMEIRO_GRAU = {"Juízo de 1º grau": "juizo", "Juiz de 1º grau": "juiz"}
 
 PJE, BI, SIG, APP = "PJe 2G", "BI · Gab A Acervo", "BI · Sigilosos", "Painel (cópia)"
 
@@ -179,7 +182,7 @@ def montar_pauta(r, t):
     destino = r.get("Sessão Destino") or r.get("Nova sessão de destino") or ""
     if destino and not any(x["sessao"] == destino for x in h):
         h.append({"sessao": destino, "numeroPrevio": "", "item": "", "situacao": "selecionado", "proximaSessao": "",
-                  "encerrado": False, "motivo": ""})
+                  "encerrado": False, "motivo": "", "registradoPor": "selecao"})
     alvo = next((x for x in h if x["sessao"] == destino), h[-1] if h else None)
     if alvo is not None:
         if (r.get("Seleção Prévia") or r.get("JULGAMENTO") or "").upper() == "SELECIONADO PREVIAMENTE":
@@ -230,6 +233,7 @@ def main(arq_acervo, pasta_banco):
         proc = r["processo"]
         rid = r["id"]
         imp = {"id": rid, "processo": proc}
+        carimbo = r.get("atualizado_em") or AGORA
         fontes_reg, div = set(), {}
         for campo, fontes in IMPORTADO.items():
             vals = [(s, c, r.get(c)) for s, c in fontes if not vazio(r.get(c))]
@@ -244,6 +248,7 @@ def main(arq_acervo, pasta_banco):
                     imp["horaEntradaTarefa"] = h
                 if motivo == "dia e mês invertidos na importação":
                     imp.setdefault("correcoes", []).append(f"dataEntradaTarefa: {motivo} ({v0} → {d})")
+                    carimbo = max(carimbo, CORRECAO_EM)
             fontes_reg.update(s for s, _, _ in vals if s != APP)
             for s, c, v in vals[1:]:
                 if not igual(v, v0) and s != APP:
@@ -256,6 +261,9 @@ def main(arq_acervo, pasta_banco):
                 imp[campo] = v
         if div:
             imp["divergencias"] = div
+        if "correcoes" in imp:
+            imp["correcoes"] = imp.pop("correcoes")   # sempre no fim, antes de atualizadoEm (mesma ordem do Painel)
+        imp["atualizadoEm"] = carimbo
         importado.append(imp)
 
         t = r.get("_") or {}
@@ -265,6 +273,9 @@ def main(arq_acervo, pasta_banco):
                 continue
             if col == "Preparo" and v == "AJG" and (r.get("_") or {}).get("_preparoAJG"):
                 continue   # preparo dispensado pela AJG: regra
+            if col in COLUNAS_PRIMEIRO_GRAU:
+                op.setdefault("triagem", {}).setdefault("primeiroGrau", {})[COLUNAS_PRIMEIRO_GRAU[col]] = v
+                continue
             b = bloco(col)
             op.setdefault(b, {})[col] = v
             blocos_vistos[b].add(col)
@@ -288,7 +299,7 @@ def main(arq_acervo, pasta_banco):
         if tec:
             op["tecnico"] = tec
         if op:
-            operacional.append({"id": rid, "processo": proc, **op})
+            operacional.append({"id": rid, "processo": proc, **op, "atualizadoEm": r.get("atualizado_em") or AGORA})
 
     corr = {
         "schema": "gabcmt.acervo.correspondencias", "versao": "1.0.0", "atualizadoEm": AGORA,
@@ -308,6 +319,7 @@ def main(arq_acervo, pasta_banco):
                                              "separado; cada etapa com data gera um registro em produtividade/registros.json",
                                     "tipoPorEtapa": PRODUTIVIDADE}},
         "primeiroGrau": {"onde": "operacional.triagem.primeiroGrau = {juizo, juiz, magistradoId}",
+                         "colunasDoPainel": COLUNAS_PRIMEIRO_GRAU,
                          "uso": "busca de casos do mesmo juiz em 1º grau (acervo e paradigmas) e impedimento do art. 144, II, CPC",
                          "fonte": "preenchido na triagem/minuta a partir da sentença; o PJe 2G não exporta o juízo de origem"},
         "pauta": {"colunas": PAUTA_COLS + PAUTA_TEC,
