@@ -5,7 +5,8 @@
  "sistemas": [
   "PJe 2G",
   "BI · Gab A Acervo",
-  "BI · Sigilosos"
+  "BI · Sigilosos",
+  "DataJud"
  ],
  "regraDePrioridade": "Em cada campo vale a primeira fonte da lista que tiver valor; as demais, quando diferem (além de maiúsculas e espaços), ficam em 'divergencias' do processo.",
  "importado": {
@@ -17,11 +18,19 @@
    {
     "sistema": "BI · Gab A Acervo",
     "coluna": "Classe"
+   },
+   {
+    "sistema": "DataJud",
+    "coluna": "Classe"
    }
   ],
   "classeCodigo": [
    {
     "sistema": "BI · Gab A Acervo",
+    "coluna": "Código_Classe"
+   },
+   {
+    "sistema": "DataJud",
     "coluna": "Código_Classe"
    }
   ],
@@ -37,17 +46,29 @@
    {
     "sistema": "Painel (cópia)",
     "coluna": "Assunto"
+   },
+   {
+    "sistema": "DataJud",
+    "coluna": "Assunto_Principal"
    }
   ],
   "assuntoCodigo": [
    {
     "sistema": "BI · Gab A Acervo",
     "coluna": "Código_Assunto_Principal"
+   },
+   {
+    "sistema": "DataJud",
+    "coluna": "Código_Assunto_Principal"
    }
   ],
   "assuntos": [
    {
     "sistema": "BI · Gab A Acervo",
+    "coluna": "Assuntos_do_Processo"
+   },
+   {
+    "sistema": "DataJud",
     "coluna": "Assuntos_do_Processo"
    }
   ],
@@ -161,11 +182,19 @@
    {
     "sistema": "BI · Gab A Acervo",
     "coluna": "Última_Movimentação"
+   },
+   {
+    "sistema": "DataJud",
+    "coluna": "Última_Movimentação"
    }
   ],
   "dataUltimaMovimentacao": [
    {
     "sistema": "BI · Gab A Acervo",
+    "coluna": "Data_Última_Movimentação"
+   },
+   {
+    "sistema": "DataJud",
     "coluna": "Data_Última_Movimentação"
    }
   ],
@@ -315,6 +344,30 @@
    {
     "sistema": "BI · Sigilosos",
     "coluna": "Nível_Sigilo"
+   }
+  ],
+  "datajudSituacao": [
+   {
+    "sistema": "DataJud",
+    "coluna": "DataJud · Situação"
+   }
+  ],
+  "datajudConferencia": [
+   {
+    "sistema": "DataJud",
+    "coluna": "DataJud · Conferir"
+   }
+  ],
+  "datajudMotivo": [
+   {
+    "sistema": "DataJud",
+    "coluna": "DataJud · Observação"
+   }
+  ],
+  "datajudDataAjuizamento": [
+   {
+    "sistema": "DataJud",
+    "coluna": "DataJud · Ajuizamento"
    }
   ]
  },
