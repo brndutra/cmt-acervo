@@ -21,18 +21,35 @@ jobs:
           python-version: '3.12'
       - name: Testar reconciliação e coleta completa
         run: python -m unittest discover -s scripts/datajud -p 'test_sincronizacao.py' -v
-      - name: Consultar e atualizar o acervo local
+      - name: Atualizar e gravar no repositório privado
         env:
           DATAJUD_API_KEY: ${{ secrets.DATAJUD_API_KEY }}
-        run: python scripts/datajud/sincronizar.py --acervo . --aplicar --chave-wiki
-      - name: Gravar atualização e relatório no repositório privado
         run: |
-          git add acervo/importado.json acervo/correspondencias.json acervo/datajud
-          if ! git diff --cached --quiet; then
-            git config user.name 'datajud-acervo[bot]'
-            git config user.email 'datajud-acervo[bot]@users.noreply.github.com'
+          git config user.name 'datajud-acervo[bot]'
+          git config user.email 'datajud-acervo[bot]@users.noreply.github.com'
+          for attempt in 1 2 3; do
+            base=$(git rev-parse origin/main)
+            python scripts/datajud/sincronizar.py --acervo . --aplicar --chave-wiki
+            git add acervo/importado.json acervo/correspondencias.json acervo/datajud
+            if git diff --cached --quiet; then
+              echo 'Acervo já estava atualizado; nenhum commit necessário.'
+              exit 0
+            fi
             git commit -m 'Acervo: consulta horária ao DataJud e relatório'
-            git push
-          fi
-      # Não há push forçado nem rebase de dados antigos: edição concorrente faz
-      # o job falhar e exige nova coleta sobre o acervo mais recente.
+            if git push origin HEAD:main; then
+              echo 'Atualização DataJud gravada no main.'
+              exit 0
+            fi
+            echo "Push recusado na tentativa ${attempt}; verificando se main avançou."
+            git fetch origin main
+            if [ "$(git rev-parse origin/main)" = "$base" ]; then
+              echo 'main não avançou; a falha não é conflito de versão.' >&2
+              exit 1
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              echo 'main continuou avançando após três tentativas; próxima execução fará nova coleta.' >&2
+              exit 1
+            fi
+            echo 'Reiniciando sobre a versão atual do main e repetindo a coleta.'
+            git reset --hard origin/main
+          done
