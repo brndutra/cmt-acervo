@@ -1,0 +1,38 @@
+# Instalar no repositório privado gabcmt-dados. O fluxo é somente DataJud → acervo GitHub.
+name: DataJud · acervo horário
+on:
+  schedule:
+    - cron: '17 * * * *' # de hora em hora; o GitHub pode atrasar a execução.
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: datajud-acervo
+  cancel-in-progress: false
+jobs:
+  sincronizar:
+    if: github.event.repository.private
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Testar reconciliação e coleta completa
+        run: python -m unittest discover -s scripts/datajud -p 'test_sincronizacao.py' -v
+      - name: Consultar e atualizar o acervo local
+        env:
+          DATAJUD_API_KEY: ${{ secrets.DATAJUD_API_KEY }}
+        run: python scripts/datajud/sincronizar.py --acervo . --aplicar --chave-wiki
+      - name: Gravar atualização e relatório no repositório privado
+        run: |
+          git add acervo/importado.json acervo/correspondencias.json acervo/datajud
+          if ! git diff --cached --quiet; then
+            git config user.name 'datajud-acervo[bot]'
+            git config user.email 'datajud-acervo[bot]@users.noreply.github.com'
+            git commit -m 'Acervo: consulta horária ao DataJud e relatório'
+            git push
+          fi
+      # Não há push forçado nem rebase de dados antigos: edição concorrente faz
+      # o job falhar e exige nova coleta sobre o acervo mais recente.
